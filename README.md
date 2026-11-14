@@ -1,32 +1,45 @@
-# Vennela Host — Web panel starter
+# Vennela Host
 
-Responsive browser dashboard for the Vennela Minecraft hosting project.
+Self-hosted Minecraft Java server control panel with a responsive web UI and Node.js API.
 
-## Run locally
-Open `index.html` in a browser, or serve this folder with any static web server.
+## Implemented
+- Password login with 12-hour bearer sessions and login rate limiting
+- Start / stop / restart a single Java server process
+- Live process status, uptime and recent console output
+- Console command submission
+- Upload, browse, download and delete files under the server directory
+- Docker deployment with persistent storage and automatic container restart
+- 30-player target setting in the dashboard
 
-## Current status
-This is a frontend starter, not a live hosting service. Buttons intentionally report that a backend is required. File selection/drag-drop is local browser selection only; it does not transfer files to a server. Player count, RAM and uptime are placeholders.
+## Important
+This is a self-hosted single-server panel, not a public multi-customer hosting provider. The 30-slot value is a configured target, not a performance guarantee. Real capacity depends on CPU, RAM, storage, world size, plugins, view distance and network.
 
-## Required for a real hosting service
-A secure backend and hosting worker are required to:
-- provision and run Paper/Purpur Minecraft instances
-- install/configure Geyser and Floodgate for Java/Bedrock crossplay
-- enforce 30 player slots and resource limits
-- upload JAR, ZIP, world and plugin files safely
-- expose authenticated start/stop/restart, console, logs and metrics APIs
-- isolate each customer's files/processes and prevent command/file path injection
+World ZIPs are uploaded as files; they are not automatically extracted. Stop the server before replacing worlds. Install Paper/Purpur as `server.jar`. Accept Mojang's EULA only if you agree, by creating `eula.txt` with `eula=true`.
 
-Do not put hosting API secrets in browser JavaScript. Use authenticated server-side API routes, TLS, per-user authorization, upload size limits, malware scanning and audit logs.
+For Java/Bedrock crossplay, install compatible Geyser and Floodgate plugins for your Minecraft version and configure UDP 19132 in your host firewall. This panel does not auto-install plugins or configure network ports.
 
-## Suggested API contract
-`POST /api/servers/:id/start`
-`POST /api/servers/:id/stop`
-`POST /api/servers/:id/restart`
-`GET /api/servers/:id/status`
-`GET /api/servers/:id/console`
-`POST /api/servers/:id/console` with `{ "command": "say Hello" }`
-`POST /api/servers/:id/files` multipart upload
-`GET /api/servers/:id/files`
+## Cloud VM deployment (Ubuntu)
+1. Install Docker Engine and the Docker Compose plugin.
+2. Clone this repository on an always-on Ubuntu VM.
+3. Copy `.env.example` to `.env`; set a unique random `PANEL_PASSWORD` (at least 12 characters).
+4. Choose `JAVA_ARGS` based on VM memory. For a 30-player target, consider a VM with 6–8 GB RAM or more; actual needs vary.
+5. Run `docker compose up -d --build`.
+6. Put the panel behind HTTPS using Caddy or Nginx. Bind public access through a reverse proxy and firewall port 3000 from the internet.
+7. Open the HTTPS URL, sign in, upload Paper/Purpur as `server.jar`, then start the server.
 
-A real 24/7 service also needs an always-on host machine/cloud VM, monitoring, backups, networking and operational budget. A website alone cannot keep a Minecraft server running.
+Do not commit `.env` or expose the panel without HTTPS. Uploaded JARs/plugins and console commands execute code on the host. Restrict access to trusted administrators and keep backups.
+
+## Android Termux
+Docker deployment above targets a Linux VM. Android use requires installing Termux, Java 25 compatible runtime and Node.js, then running `backend/server.js` directly with `SERVER_DIR` set to a writable folder. Android battery management and network changes can stop hosting; phone hosting cannot guarantee 24/7 uptime. Keep the device powered and disable battery optimization for Termux. Public reachability may need router port forwarding or a secure tunnel.
+
+## API
+- `POST /api/login` — `{ "password": "..." }`
+- `GET /api/status`, `GET /api/logs`
+- `POST /api/server/start`, `/stop`, `/restart`
+- `POST /api/console` — `{ "command": "say Hello" }`
+- `GET /api/files?path=plugins`
+- `POST /api/files/upload` — multipart field `files`, optional `directory`
+- `GET /api/files/download?path=plugins/example.jar`
+- `DELETE /api/files?path=plugins/example.jar`
+
+All API routes except login and health require a bearer token.
