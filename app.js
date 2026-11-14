@@ -86,7 +86,10 @@ document.getElementById('stop').onclick=()=>serverAction('stop');
 document.getElementById('restart').onclick=()=>serverAction('restart');
 document.getElementById('refresh').onclick=()=>{refreshStatus();loadFiles()};
 document.getElementById('browseFiles').onclick=()=>loadFiles();
-document.getElementById('backup').onclick=async()=>{\n try{const response=await fetch('/api/backup',{headers:{Authorization:'Bearer '+token}});if(!response.ok)throw new Error('Backup failed');const blob=await response.blob(),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='vennela-backup.zip';a.click();URL.revokeObjectURL(url);note('Backup downloaded.')}catch(error){alert(error.message)}\n};\ndocument.getElementById('newFolder').onclick=async()=>{
+document.getElementById('backup').onclick=async()=>{
+ try{const response=await fetch('/api/backup',{headers:{Authorization:'Bearer '+token}});if(!response.ok)throw new Error('Backup failed');const blob=await response.blob(),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='vennela-backup.zip';a.click();URL.revokeObjectURL(url);note('Backup downloaded.')}catch(error){alert(error.message)}
+};
+document.getElementById('newFolder').onclick=async()=>{
  const name=prompt('New folder name:');if(!name)return;
  try{await api('/api/files/mkdir',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:joinPath(name)})});loadFiles()}
  catch(error){alert(error.message)}
