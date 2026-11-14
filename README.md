@@ -29,6 +29,11 @@ For Java/Bedrock crossplay, install compatible Geyser and Floodgate plugins for 
 
 Do not commit `.env` or expose the panel without HTTPS. Uploaded JARs/plugins and console commands execute code on the host. Restrict access to trusted administrators and keep backups.
 
+## Android app (APK)
+The `app/` directory contains an Android Studio WebView client for the control panel. It does not run the Minecraft server itself; it connects to a panel already running on a phone or cloud VM. Remote panel URLs must use HTTPS. For Termux on the same phone, use `http://127.0.0.1:3000`.
+
+To get an APK, open the repository's **Actions** tab, select **Build Vennela Host Android APK**, and download the `Vennela-Host-Android-debug` artifact after the workflow succeeds. This is a debug APK, not a Play Store-signed release.
+
 ## Android Termux
 Docker deployment above targets a Linux VM. Android use requires installing Termux, Java 25 compatible runtime and Node.js, then running `backend/server.js` directly with `SERVER_DIR` set to a writable folder. Android battery management and network changes can stop hosting; phone hosting cannot guarantee 24/7 uptime. Keep the device powered and disable battery optimization for Termux. Public reachability may need router port forwarding or a secure tunnel.
 
