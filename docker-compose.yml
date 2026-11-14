@@ -10,8 +10,9 @@ services:
     environment:
       PANEL_PASSWORD: ${PANEL_PASSWORD:?Set PANEL_PASSWORD in .env}
       SERVER_JAR: ${SERVER_JAR:-server.jar}
-      JAVA_ARGS: ${JAVA_ARGS:--Xms1G -Xmx3G}
+      JAVA_ARGS: ${JAVA_ARGS:--Xms2G -Xmx5G}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-1024}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://shivafamily146-chemistry.github.io}
     volumes:
       - vennela-data:/data
     stop_grace_period: 40s
