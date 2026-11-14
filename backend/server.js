@@ -76,6 +76,14 @@ app.get("/api/logs", auth, (_req, res) => res.json({ logs: logs.slice(-250) }));
 
 app.post("/api/server/start", auth, (_req, res) => {
   if (minecraft && minecraft.exitCode === null) return res.status(409).json({ error: "Server already running" });
+  const propertiesPath = safePath("server.properties");
+  if (fs.existsSync(propertiesPath)) {
+    const lines = fs.readFileSync(propertiesPath, "utf8").split(/\r?\n/).filter(line => !line.startsWith("max-players="));
+    lines.push("max-players=30");
+    fs.writeFileSync(propertiesPath, lines.join("\n") + "\n");
+  } else {
+    fs.writeFileSync(propertiesPath, "max-players=30\n");
+  }
   const jar = safePath(SERVER_JAR);
   if (!fs.existsSync(jar)) return res.status(400).json({ error: `Missing ${SERVER_JAR}. Upload your Paper/Purpur JAR first.` });
   stopping = false;
