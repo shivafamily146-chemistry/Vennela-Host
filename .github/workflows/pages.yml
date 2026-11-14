@@ -2,14 +2,8 @@ name: Deploy Vennela Host Website
 
 on:
   push:
-    branches: [main]
-    paths:
-      - 'index.html'
-      - 'style.css'
-      - 'app.js'
-      - 'manifest.json'
-      - 'service-worker.js'
-      - '.github/workflows/pages.yml'
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -38,6 +32,7 @@ jobs:
         run: |
           mkdir -p public
           cp index.html style.css app.js manifest.json service-worker.js public/
+          touch public/.nojekyll
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
