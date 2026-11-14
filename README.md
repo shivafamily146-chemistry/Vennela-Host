@@ -16,7 +16,7 @@ This is a self-hosted single-server panel, not a public multi-customer hosting p
 
 World ZIPs are uploaded as files; they are not automatically extracted. Stop the server before replacing worlds. Install Paper/Purpur as `server.jar`. Accept Mojang's EULA only if you agree, by creating `eula.txt` with `eula=true`.
 
-For Java/Bedrock crossplay, install compatible Geyser and Floodgate plugins for your Minecraft version and configure UDP 19132 in your host firewall. This panel does not auto-install plugins or configure network ports.
+For Java/Bedrock crossplay, install compatible Geyser and Floodgate plugins for your Minecraft version and configure Geyser to listen on UDP 19132. Docker publishes Java TCP 25565 and Bedrock UDP 19132; allow those game ports in your cloud firewall. Keep TCP 3000 private behind HTTPS. This panel does not auto-install plugins or configure network ports.
 
 ## Cloud VM deployment (Ubuntu)
 1. Install Docker Engine and the Docker Compose plugin.
@@ -24,7 +24,7 @@ For Java/Bedrock crossplay, install compatible Geyser and Floodgate plugins for 
 3. Copy `.env.example` to `.env`; set a unique random `PANEL_PASSWORD` (at least 12 characters).
 4. Choose `JAVA_ARGS` based on VM memory. For a 30-player target, consider a VM with 6–8 GB RAM or more; actual needs vary.
 5. Run `docker compose up -d --build`.
-6. Put the panel behind HTTPS using Caddy or Nginx. Bind public access through a reverse proxy and firewall port 3000 from the internet.
+6. Point a domain's DNS A record to the VM. Install Caddy on the VM, copy `Caddyfile.example` to your Caddy config, replace `panel.example.com` with your domain, then reload Caddy. Caddy will obtain HTTPS certificates automatically. The panel port is bound to localhost only; keep it that way.
 7. Open the HTTPS URL, sign in, upload Paper/Purpur as `server.jar`, then start the server.
 
 Do not commit `.env` or expose the panel without HTTPS. Uploaded JARs/plugins and console commands execute code on the host. Restrict access to trusted administrators and keep backups.
