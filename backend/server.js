@@ -233,6 +233,16 @@ app.post("/api/files/mkdir", auth, (req, res) => {
     res.json({ created: true });
   } catch (error) { res.status(400).json({ error: error.message }); }
 });
+app.get("/api/files/text", auth, (req, res) => {
+  try {
+    const file = safePath(req.query.path || "");
+    const allowed = /\\.(yml|yaml|properties|json|txt|cfg|conf|toml|md)$/i;
+    if (!allowed.test(file)) return res.status(400).json({ error: "Unsupported text file" });
+    const real = fs.realpathSync(file);
+    if (!insideRoot(real) || !fs.statSync(real).isFile() || fs.statSync(real).size > 1024 * 1024) return res.status(400).json({ error: "File too large or invalid" });
+    res.json({ content: fs.readFileSync(real, "utf8") });
+  } catch (error) { res.status(404).json({ error: "File not found" }); }
+});
 app.put("/api/files/text", auth, (req, res) => {
   try {
     const file = safePath(req.body?.path || "");
