@@ -245,7 +245,7 @@ app.post("/api/files/mkdir", auth, (req, res) => {
 app.get("/api/files/text", auth, (req, res) => {
   try {
     const file = safePath(req.query.path || "");
-    const allowed = /\\.(yml|yaml|properties|json|txt|cfg|conf|toml|md)$/i;
+    const allowed = /\.(yml|yaml|properties|json|txt|cfg|conf|toml|md)$/i;
     if (!allowed.test(file)) return res.status(400).json({ error: "Unsupported text file" });
     const real = fs.realpathSync(file);
     if (!insideRoot(real) || !fs.statSync(real).isFile() || fs.statSync(real).size > 1024 * 1024) return res.status(400).json({ error: "File too large or invalid" });
