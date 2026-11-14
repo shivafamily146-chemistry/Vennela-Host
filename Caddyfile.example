@@ -1,0 +1,4 @@
+# Copy this to your Caddy server configuration and replace the domain.
+panel.example.com {
+    reverse_proxy 127.0.0.1:3000
+}
