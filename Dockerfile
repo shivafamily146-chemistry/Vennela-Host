@@ -7,7 +7,7 @@ COPY backend/server.js ./server.js
 COPY index.html style.css app.js manifest.json service-worker.js ./public/
 RUN mkdir -p /data/server && chown -R nobody:nogroup /app /data
 USER nobody
-ENV PORT=3000 SERVER_DIR=/data/server SERVER_JAR=server.jar JAVA_ARGS="-Xms1G -Xmx3G"
+ENV PORT=3000 SERVER_DIR=/data/server SERVER_JAR=server.jar JAVA_ARGS="-Xms2G -Xmx5G" CORS_ORIGINS="https://shivafamily146-chemistry.github.io"
 EXPOSE 3000 25565/tcp 19132/udp
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["npm","start"]
