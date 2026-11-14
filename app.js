@@ -2,14 +2,14 @@ const log=document.getElementById('log');
 const tokenKey='vennela_host_token';
 const apiBaseKey='vennela_host_api_base';
 const queryApi=new URLSearchParams(location.search).get('api');
-let apiBase=(queryApi||localStorage.getItem(apiBaseKey)||'').replace(/\\/$/,'');
+let apiBase=(queryApi||localStorage.getItem(apiBaseKey)||'').replace(/\\/+$/,'');
 if(queryApi)localStorage.setItem(apiBaseKey,apiBase);
 function apiUrl(path){return apiBase+path;}
 function configureApi(){
  if(location.hostname.endsWith('github.io')&&!apiBase){
   const value=prompt('Enter your Vennela Host backend HTTPS URL (example: https://panel.example.com):');
   if(!value)return false;
-  const clean=value.trim().replace(/\\/$/,'');
+  const clean=value.trim().replace(/\\/+$/,'');
   try{const parsed=new URL(clean);if(parsed.protocol!=='https:'&&parsed.hostname!=='localhost'&&parsed.hostname!=='127.0.0.1')throw new Error();apiBase=clean;localStorage.setItem(apiBaseKey,apiBase);}
   catch{alert('Enter a valid HTTPS backend URL.');return false;}
  }
