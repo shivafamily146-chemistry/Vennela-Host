@@ -8,6 +8,6 @@ COPY index.html style.css app.js ./public/
 RUN mkdir -p /data/server && chown -R nobody:nogroup /app /data
 USER nobody
 ENV PORT=3000 SERVER_DIR=/data/server SERVER_JAR=server.jar JAVA_ARGS="-Xms1G -Xmx3G"
-EXPOSE 3000
+EXPOSE 3000 25565/tcp 19132/udp
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["npm","start"]
