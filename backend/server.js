@@ -1,7 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import multer from "multer";
+import multer from "multer";\nimport archiver from "archiver";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -255,7 +255,24 @@ app.put("/api/files/text", auth, (req, res) => {
   } catch (error) { res.status(400).json({ error: error.message }); }
 });
 
-app.get("/api/health", (_req, res) => res.json({ ok: true, service: "Vennela Host API" }));
+app.get("/api/backup", auth, (_req, res) => {
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  res.setHeader("Content-Type", "application/zip");
+  res.setHeader("Content-Disposition", `attachment; filename="vennela-backup-${stamp}.zip"`);
+  const archive = archiver("zip", { zlib: { level: 1 } });
+  archive.on("error", error => {
+    log("Backup failed: " + error.message);
+    if (!res.headersSent) res.status(500).end("Backup failed");
+    else res.destroy(error);
+  });
+  archive.pipe(res);
+  archive.directory(SERVER_DIR, false, entry => {
+    if (entry.name.startsWith(".incoming/") || entry.name === ".incoming") return false;
+    return entry;
+  });
+  archive.finalize();
+});
+\napp.get("/api/health", (_req, res) => res.json({ ok: true, service: "Vennela Host API" }));
 app.use((error, _req, res, _next) => {
   log("API error: " + error.message);
   res.status(error instanceof multer.MulterError ? 413 : 500).json({ error: error instanceof multer.MulterError ? "Upload limit exceeded" : "Internal server error" });
