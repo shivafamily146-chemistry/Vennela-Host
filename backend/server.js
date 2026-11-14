@@ -1,5 +1,6 @@
 import express from "express";
 import helmet from "helmet";
+import cors from "cors";
 import rateLimit from "express-rate-limit";
 import multer from "multer";
 import archiver from "archiver";
@@ -15,6 +16,7 @@ const SERVER_DIR = path.resolve(process.env.SERVER_DIR || "/data/server");
 const SERVER_JAR = path.basename(process.env.SERVER_JAR || "server.jar");
 const JAVA_ARGS = (process.env.JAVA_ARGS || "-Xms1G -Xmx3G").split(/\s+/).filter(Boolean);
 const MAX_UPLOAD_MB = Math.max(1, Math.min(Number(process.env.MAX_UPLOAD_MB || 1024), 2048));
+const allowedOrigins = (process.env.CORS_ORIGINS || "https://shivafamily146-chemistry.github.io").split(",").map(value => value.trim()).filter(Boolean);
 const sessions = new Map();
 let minecraft = null;
 let startedAt = null;
@@ -30,6 +32,7 @@ fs.mkdirSync(SERVER_DIR, { recursive: true });
 fs.mkdirSync(path.join(SERVER_DIR, ".incoming"), { recursive: true });
 
 app.disable("x-powered-by");
+app.use(cors({ origin(origin, callback) { if (!origin || allowedOrigins.includes(origin)) return callback(null, true); return callback(new Error("Origin not allowed by CORS")); }, methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], allowedHeaders: ["Content-Type", "Authorization"] }));
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "32kb" }));
 app.use(express.static(path.resolve("public")));
