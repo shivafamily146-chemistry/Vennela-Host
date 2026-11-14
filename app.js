@@ -72,7 +72,7 @@ async function loadFiles(folder=currentPath){
 }
 async function downloadFile(file){
  try{
-  const response=await fetch(apiUrl('/api/files/download?path='+encodeURIComponent(file),{headers:{Authorization:'Bearer '+token}});
+  const response=await fetch(apiUrl('/api/files/download?path='+encodeURIComponent(file)),{headers:{Authorization:'Bearer '+token}});
   if(!response.ok)throw new Error('Download failed');
   const blob=await response.blob(),url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download=file.split('/').pop();a.click();URL.revokeObjectURL(url);
