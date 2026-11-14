@@ -4,12 +4,17 @@ services:
     container_name: vennela-host
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
+      - "25565:25565/tcp"
+      - "19132:19132/udp"
     environment:
       PANEL_PASSWORD: ${PANEL_PASSWORD:?Set PANEL_PASSWORD in .env}
       SERVER_JAR: ${SERVER_JAR:-server.jar}
       JAVA_ARGS: ${JAVA_ARGS:--Xms1G -Xmx3G}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-1024}
     volumes:
-      - ./data:/data
+      - vennela-data:/data
     stop_grace_period: 40s
+
+volumes:
+  vennela-data:
