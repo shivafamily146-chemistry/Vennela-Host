@@ -34,10 +34,14 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Prepare public website files
+        run: |
+          mkdir -p public
+          cp index.html style.css app.js manifest.json service-worker.js public/
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: public
       - name: Deploy website
         id: deployment
         uses: actions/deploy-pages@v4
