@@ -63,6 +63,12 @@ function safePath(input = "") {
 function insideRoot(real) {
   return real === SERVER_DIR || real.startsWith(SERVER_DIR + path.sep);
 }
+function assertParentContained(fullPath) {
+  let parent = path.dirname(fullPath);
+  while (!fs.existsSync(parent) && parent !== SERVER_DIR) parent = path.dirname(parent);
+  const realParent = fs.realpathSync(parent);
+  if (!insideRoot(realParent)) throw new Error("Parent path outside server directory");
+}
 function memoryUsage() {
   if (!minecraft?.pid) return null;
   try {
@@ -175,6 +181,7 @@ app.post("/api/files/upload", auth, upload.array("files", 10), (req, res) => {
   const moved = [];
   try {
     const targetDir = safePath(req.body?.directory || "");
+    assertParentContained(targetDir);
     fs.mkdirSync(targetDir, { recursive: true });
     if (!insideRoot(fs.realpathSync(targetDir))) throw new Error("Invalid destination directory");
     for (const file of req.files || []) {
@@ -229,6 +236,7 @@ app.post("/api/files/mkdir", auth, (req, res) => {
   try {
     const dir = safePath(req.body?.path || "");
     if (dir === SERVER_DIR) return res.status(400).json({ error: "Folder path required" });
+    assertParentContained(dir);
     fs.mkdirSync(dir);
     res.json({ created: true });
   } catch (error) { res.status(400).json({ error: error.message }); }
@@ -250,6 +258,7 @@ app.put("/api/files/text", auth, (req, res) => {
     const content = String(req.body?.content ?? "");
     if (!allowed.test(file) || Buffer.byteLength(content, "utf8") > 1024 * 1024) return res.status(400).json({ error: "Only text config files up to 1 MB can be edited" });
     if (file === SERVER_DIR || (fs.existsSync(file) && fs.lstatSync(file).isSymbolicLink())) return res.status(400).json({ error: "Invalid file" });
+    assertParentContained(file);
     fs.writeFileSync(file, content, { encoding: "utf8", flag: "w" });
     res.json({ saved: true });
   } catch (error) { res.status(400).json({ error: error.message }); }
