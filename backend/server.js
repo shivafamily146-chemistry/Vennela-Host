@@ -24,7 +24,8 @@ if (PASSWORD.length < 12) {
   console.error("PANEL_PASSWORD must be set to at least 12 characters.");
   process.exit(1);
 }
-fs.mkdirSync(SERVER_DIR, { recursive: true });\nfs.mkdirSync(path.join(SERVER_DIR, ".incoming"), { recursive: true });
+fs.mkdirSync(SERVER_DIR, { recursive: true });
+fs.mkdirSync(path.join(SERVER_DIR, ".incoming"), { recursive: true });
 
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "32kb" }));
