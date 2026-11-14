@@ -4,7 +4,7 @@ WORKDIR /app
 COPY backend/package*.json ./
 RUN npm install --omit=dev
 COPY backend/server.js ./server.js
-COPY index.html style.css app.js ./public/
+COPY index.html style.css app.js manifest.json service-worker.js ./public/
 RUN mkdir -p /data/server && chown -R nobody:nogroup /app /data
 USER nobody
 ENV PORT=3000 SERVER_DIR=/data/server SERVER_JAR=server.jar JAVA_ARGS="-Xms1G -Xmx3G"
