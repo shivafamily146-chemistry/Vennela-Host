@@ -7,7 +7,7 @@ Self-hosted Minecraft Java server control panel with a responsive web UI and Nod
 - Start / stop / restart a single Java server process
 - Live process status, uptime and recent console output
 - Console command submission
-- Upload, browse, download and delete files under the server directory
+- Upload, browse, download, edit supported text configs, create folders and delete files under the server directory\n- Download a ZIP backup of server files
 - Docker deployment with persistent storage and automatic container restart
 - 30-player target setting in the dashboard
 
@@ -37,9 +37,9 @@ Docker deployment above targets a Linux VM. Android use requires installing Term
 - `GET /api/status`, `GET /api/logs`
 - `POST /api/server/start`, `/stop`, `/restart`
 - `POST /api/console` — `{ "command": "say Hello" }`
-- `GET /api/files?path=plugins`
+- `GET /api/backup` — download ZIP backup\n- `GET /api/files?path=plugins`
 - `POST /api/files/upload` — multipart field `files`, optional `directory`
 - `GET /api/files/download?path=plugins/example.jar`
-- `DELETE /api/files?path=plugins/example.jar`
+- `DELETE /api/files?path=plugins/example.jar`\n- `POST /api/files/mkdir` — `{ "path": "plugins/new-folder" }`\n- `GET /api/files/text?path=server.properties` and `PUT /api/files/text` — edit supported text config files
 
 All API routes except login and health require a bearer token.
