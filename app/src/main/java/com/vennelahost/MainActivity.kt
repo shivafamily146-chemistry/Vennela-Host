@@ -50,7 +50,7 @@ class MainActivity : Activity() {
         }
         val connect = Button(this).apply {
             text = "Connect"
-            setOnClickListener { connectToPanel(address.text.toString().trim()) }
+            setOnClickListener { connectToPanel(address.getText().toString().trim()) }
         }
         shell.addView(title)
         shell.addView(hint)
