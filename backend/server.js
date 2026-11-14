@@ -282,7 +282,8 @@ app.get("/api/backup", auth, (_req, res) => {
   });
   archive.finalize();
 });
-\napp.get("/api/health", (_req, res) => res.json({ ok: true, service: "Vennela Host API" }));
+
+app.get("/api/health", (_req, res) => res.json({ ok: true, service: "Vennela Host API" }));
 app.use((error, _req, res, _next) => {
   log("API error: " + error.message);
   res.status(error instanceof multer.MulterError ? 413 : 500).json({ error: error instanceof multer.MulterError ? "Upload limit exceeded" : "Internal server error" });
